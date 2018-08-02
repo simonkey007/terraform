@@ -69,7 +69,7 @@ resource "aws_internet_gateway" "default" {
 resource "aws_subnet" "public_1" {
     vpc_id = "${aws_vpc.default.id}"
 
-    cidr_block = "${var.private_subnet_1_cidr}"
+    cidr_block = "${var.public_subnet_1_cidr}"
     availability_zone = "${var.availability_zone_1}"
 
     tags {
