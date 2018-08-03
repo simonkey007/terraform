@@ -1,47 +1,39 @@
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
-
-variable "aws_region" {
-  description = "EC2 Region for the VPC"
-  default = "us-east-1"
-}
+variable "env_name" {}
 
 variable "vpc_cidr" {
-  description = "CIDR for the whole VPC"
+  type    = "string"
   default = "10.0.0.0/16"
 }
-
+variable "aws_region" {
+  type    = "string"
+  default = "us-west-2"
+}
+variable "availability_zone_1" {
+  type    = "string"
+  default = "us-west-2a"
+}
+variable "availability_zone_2" {
+  type    = "string"
+  default = "us-west-2c"
+}
 variable "public_subnet_1_cidr" {
-  description = "CIDR for the Public Subnet 1"
+  type    = "string"
   default = "10.0.0.0/24"
 }
-
 variable "private_subnet_1_cidr" {
-  description = "CIDR for the Private Subnet 1"
+  type    = "string"
   default = "10.0.1.0/24"
 }
-
 variable "public_subnet_2_cidr" {
-  description = "CIDR for the Public Subnet 2"
+  type    = "string"
   default = "10.0.2.0/24"
 }
-
 variable "private_subnet_2_cidr" {
-  description = "CIDR for the Private Subnet 2"
+  type    = "string"
   default = "10.0.3.0/24"
 }
-
-variable "availability_zone_1" {
-  description = "Availability Zone 1"
-  default = "us-east-1a"
-}
-
-variable "availability_zone_2" {
-  description = "Availability Zone 2"
-  default = "us-east-1b"
-}
-
-variable "env_name" {}
 
 provider "aws" {
   access_key = "${var.aws_access_key}"
