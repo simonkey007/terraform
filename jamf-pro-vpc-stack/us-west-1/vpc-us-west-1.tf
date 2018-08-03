@@ -1,15 +1,10 @@
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
 variable "env_name" {}
 
 variable "vpc_cidr" {
   type    = "string"
   default = "10.0.0.0/16"
 }
-variable "aws_region" {
-  type    = "string"
-  default = "us-west-1"
-}
+
 variable "availability_zone_1" {
   type    = "string"
   default = "us-west-1a"
@@ -35,12 +30,7 @@ variable "private_subnet_2_cidr" {
   default = "10.0.3.0/24"
 }
 
-
-provider "aws" {
-  access_key = "${var.aws_access_key}"
-  secret_key = "${var.aws_secret_key}"
-  region = "${var.aws_region}"
-}
+provider "aws" {}
 
 resource "aws_vpc" "default" {
   cidr_block = "${var.vpc_cidr}"
