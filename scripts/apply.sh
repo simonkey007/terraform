@@ -1,6 +1,10 @@
-#!/bin/bash
+#!/bin/sh
+
+set -e
+
+export TF_IN_AUTOMATION="true"
+
 HOME_DIR=$(pwd)
-cd ${TERRAFORM_PLAN_DIRECTORY}
-terraform init
-terraform apply "plan"
-mv terraform.tfstate ${HOME_DIR}/${OUTPUT_DIRECTORY}/terraform.tfstate
+tar -xzf  ${TERRAFORM_PLAN_DIRECTORY}/terraform-plan.tgz
+cd ${OUTPUT_DIRECTORY}
+terraform apply -input=false "tfplan"
