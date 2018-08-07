@@ -192,3 +192,27 @@ resource "aws_route_table_association" "private_2" {
   subnet_id = "${aws_subnet.private_2.id}"
   route_table_id = "${aws_route_table.private_2.id}"
 }
+
+resource "aws_security_group" "elb_sg" {
+  vpc_id = "${aws_vpc.default.id}"
+  name = "elb-sg-${var.env_name}"
+  description = "Allow access to ELB on port 80"
+
+  ingress {
+    from_port = 0
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name = "${var.env_name} ELB SG"
+  }
+}
