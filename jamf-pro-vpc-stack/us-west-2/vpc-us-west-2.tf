@@ -1,4 +1,5 @@
 variable "env_name" {}
+variable "key" {}
 
 variable "vpc_cidr" {
   type    = "string"
@@ -217,6 +218,75 @@ resource "aws_security_group" "alb_sg" {
   }
 }
 
+resource "aws_security_group" "ec2_sg" {
+  vpc_id = "${aws_vpc.default.id}"
+  name = "ec2-sg-${var.env_name}"
+  description = "Allow access to EC2 on port 80"
+
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    security_groups = [ "${aws_security_group.alb_sg.id}" ]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name = "${var.env_name} ALB SG"
+  }
+}
+
+resource "aws_key_pair" "test" {
+  key_name   = "test-key"
+  public_key = "${var.key}"
+}
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+resource "aws_instance" "web1" {
+  ami           = "${data.aws_ami.ubuntu.id}"
+  instance_type = "t2.micro"
+  vpc_security_group_ids = [ "${aws_security_group.ec2_sg.id}" ]
+  key_name = "test-key"
+  subnet_id = "${aws_subnet.private_1.id}"
+
+  tags {
+    Name = "web1-${var.env_name}"
+  }
+}
+
+resource "aws_instance" "web2" {
+  ami           = "${data.aws_ami.ubuntu.id}"
+  instance_type = "t2.micro"
+  vpc_security_group_ids = [ "${aws_security_group.ec2_sg.id}" ]
+  key_name = "test-key"
+  subnet_id = "${aws_subnet.private_2.id}"
+
+  tags {
+    Name = "web2-${var.env_name}"
+  }
+}
+
 resource "aws_lb" "test" {
   name               = "alb-${var.env_name}"
   internal           = false
@@ -228,5 +298,37 @@ resource "aws_lb" "test" {
 
   tags {
     Name = "${var.env_name} ALB"
+  }
+}
+
+resource "aws_lb_target_group" "test" {
+  name     = "alb-target-group-${var.env_name}"
+  port     = 80
+  protocol = "HTTP"
+  path = "/"
+  vpc_id   = "${aws_vpc.default.id}"
+  target_type = "instance"
+}
+
+resource "aws_lb_target_group_attachment" "test1" {
+  target_group_arn = "${aws_lb_target_group.test.arn}"
+  target_id        = "${aws_instance.web1.id}"
+  port             = 80
+}
+
+resource "aws_lb_target_group_attachment" "test2" {
+  target_group_arn = "${aws_lb_target_group.test.arn}"
+  target_id        = "${aws_instance.web2.id}"
+  port             = 80
+}
+
+resource "aws_lb_listener" "test" {
+  load_balancer_arn = "${aws_lb.test.arn}"
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    target_group_arn = "${aws_lb_target_group.test.arn}"
+    type             = "forward"
   }
 }
