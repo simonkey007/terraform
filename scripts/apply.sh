@@ -5,7 +5,7 @@ set -e
 export TF_IN_AUTOMATION="true"
 
 HOME_DIR=$(pwd)
-tar -xzf  ${TERRAFORM_PLAN_DIRECTORY}/terraform.tgz
+tar -xzf  ${TERRAFORM_S3_DIRECTORY}/terraform.tgz
 cd ${OUTPUT_DIRECTORY}
 terraform apply -input=false "tfplan"
 
