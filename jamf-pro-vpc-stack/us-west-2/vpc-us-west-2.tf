@@ -305,9 +305,15 @@ resource "aws_lb_target_group" "test" {
   name     = "alb-target-group-${var.env_name}"
   port     = 80
   protocol = "HTTP"
-  path = "/"
+  health_check {
+    path = "/"
+  }
   vpc_id   = "${aws_vpc.default.id}"
   target_type = "instance"
+
+  tags {
+    Name = "${var.env_name} ALB target group"
+  }
 }
 
 resource "aws_lb_target_group_attachment" "test1" {
