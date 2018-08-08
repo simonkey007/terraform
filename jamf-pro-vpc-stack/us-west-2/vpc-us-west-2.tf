@@ -277,7 +277,6 @@ resource "aws_instance" "web1" {
   key_name = "test-key"
   associate_public_ip_address = "true"
   subnet_id = "${aws_subnet.private_1.id}"
-  user_data = "${file("../terraform-git/scripts/user-data.sh")}"
 
   tags {
     Name = "web1-${var.env_name}"
@@ -291,7 +290,6 @@ resource "aws_instance" "web2" {
   key_name = "test-key"
   associate_public_ip_address = "true"
   subnet_id = "${aws_subnet.private_2.id}"
-  user_data = "${file("../terraform-git/scripts/user-data.sh")}"
 
   tags {
     Name = "web2-${var.env_name}"
