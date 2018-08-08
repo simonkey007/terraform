@@ -5,7 +5,7 @@ set -e
 export TF_IN_AUTOMATION="true"
 
 mkdir ~/.ssh/
-echo ${PRIVATE_KEY} > ~/.ssh/id_rsa
+echo -e "${PRIVATE_KEY}" > ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa
 
 export ANSIBLE_HOST_KEY_CHECKING=False
