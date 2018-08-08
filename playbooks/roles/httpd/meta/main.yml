@@ -1,28 +1,37 @@
 ---
-# file: httpd/meta/main.yml
-#
-# meta file
-#
+dependencies: []
+
 galaxy_info:
-  author: Pedro Salgado
-  description: Ansible role to setup the Apache HTTP server.
-  company: ansiblebit.org
-  license: BSD
-  min_ansible_version: 2.0
+  author: geerlingguy
+  description: Apache 2.x for Linux.
+  company: "Midwestern Mac, LLC"
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.4
   platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Amazon
+      versions:
+        - all
     - name: Debian
       versions:
-        - jessie
-        - wheezy
+        - all
     - name: Ubuntu
       versions:
-        - xenial
         - trusty
-        - precise
+        - xenial
+        - bionic
+    - name: Suse
+      versions:
+        - all
+    - name: Solaris
+      versions:
+        - 11.3
   galaxy_tags:
-    - apache
-    - debian
-    - httpd
-    - ubuntu
     - web
-dependencies: []
+    - apache
+    - webserver
+    - html
+
+allow_duplicates: yes

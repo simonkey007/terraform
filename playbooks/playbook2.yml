@@ -1,0 +1,10 @@
+- hosts: webservers
+  gather_facts: yes
+  become: True
+  become_user: root
+
+  vars:
+    ansible_os_family: Debian
+
+  roles:
+    - httpd

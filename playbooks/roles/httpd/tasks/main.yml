@@ -1,40 +1,42 @@
 ---
-# file: httpd/tasks/main.yml
-#
-# tasks file
-#
+# Include variables and define needed variables.
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
 
-## include OS family specific variables
+- name: Include variables for Amazon Linux.
+  include_vars: "AmazonLinux.yml"
+  when: ansible_distribution == "Amazon" and ansible_distribution_major_version == "NA"
 
-- name: include OS family/distribution specific variables
-  include_vars: "{{ item }}"
-  with_first_found:
-    - skip: true
-      files:
-        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
-        - "{{ ansible_distribution | lower }}.yml"
-        - "{{ ansible_os_family | lower }}.yml"
+- name: Define apache_packages.
+  set_fact:
+    apache_packages: "{{ __apache_packages | list }}"
+  when: apache_packages is not defined
 
+# Setup/install tasks.
+- include_tasks: "setup-{{ ansible_os_family }}.yml"
 
-## include installation method variables
+# Figure out what version of Apache is installed.
+- name: Get installed version of Apache.
+  shell: "{{ apache_daemon_path }}{{ apache_daemon }} -v"
+  changed_when: false
+  check_mode: no
+  register: _apache_version
 
-- include_vars: "{{ httpd_installation }}.yml"
+- name: Create apache_version variable.
+  set_fact:
+    apache_version: "{{ _apache_version.stdout.split()[2].split('/')[1] }}"
 
+- include_vars: apache-22.yml
+  when: "apache_version.split('.')[1] == '2'"
 
-## install
+- include_vars: apache-24.yml
+  when: "apache_version.split('.')[1] == '4'"
 
-- include: debug.yml
-  when: debug | default(false)
-  tags: debug
+# Configure Apache.
+- include_tasks: "configure-{{ ansible_os_family }}.yml"
 
-- include: "{{ httpd_installation }}/main.yml"
-  tags: installation
-
-- include: modules.yml
-  tags: modules
-
-- include: sites.yml
-  tags: sites
-
-- include: conf.yml
-  tags: conf
+- name: Ensure Apache has selected state and enabled on boot.
+  service:
+    name: "{{ apache_service }}"
+    state: "{{ apache_state }}"
+    enabled: yes

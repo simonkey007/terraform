@@ -230,6 +230,13 @@ resource "aws_security_group" "ec2_sg" {
     security_groups = [ "${aws_security_group.alb_sg.id}" ]
   }
 
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
   egress {
     from_port = 0
     to_port = 0
@@ -269,6 +276,7 @@ resource "aws_instance" "web1" {
   vpc_security_group_ids = [ "${aws_security_group.ec2_sg.id}" ]
   key_name = "test-key"
   subnet_id = "${aws_subnet.public_1.id}"
+  user_data = "${file("../terraform-git/scripts/user-data.sh")}"
 
   tags {
     Name = "web1-${var.env_name}"
@@ -281,10 +289,31 @@ resource "aws_instance" "web2" {
   vpc_security_group_ids = [ "${aws_security_group.ec2_sg.id}" ]
   key_name = "test-key"
   subnet_id = "${aws_subnet.public_2.id}"
+  user_data = "${file("../terraform-git/scripts/user-data.sh")}"
 
   tags {
     Name = "web2-${var.env_name}"
   }
+}
+
+module "ansible_provisioner" {
+  source    = "github.com/cloudposse/tf_ansible"
+
+  arguments = ["--user=ubuntu"]
+  envs      = ["host=${aws_instance.web1.public_ip}"]
+  playbook  = "../terraform-git/playbooks/playbook.yml"
+  dry_run   = false
+
+}
+
+module "ansible_provisioner" {
+  source    = "github.com/cloudposse/tf_ansible"
+
+  arguments = ["--user=ubuntu"]
+  envs      = ["host=${aws_instance.web2.public_ip}"]
+  playbook  = "../terraform-git/playbooks/playbook.yml"
+  dry_run   = false
+
 }
 
 resource "aws_lb" "test" {
