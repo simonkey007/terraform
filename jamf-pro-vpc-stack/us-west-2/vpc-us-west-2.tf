@@ -296,7 +296,7 @@ resource "aws_instance" "web2" {
   }
 }
 
-module "ansible_provisioner" {
+module "ansible_provisioner1" {
   source    = "github.com/cloudposse/tf_ansible"
 
   arguments = ["--user=ubuntu"]
@@ -306,7 +306,7 @@ module "ansible_provisioner" {
 
 }
 
-module "ansible_provisioner" {
+module "ansible_provisioner2" {
   source    = "github.com/cloudposse/tf_ansible"
 
   arguments = ["--user=ubuntu"]
