@@ -238,7 +238,7 @@ resource "aws_security_group" "ec2_sg" {
   }
 
   tags {
-    Name = "${var.env_name} ALB SG"
+    Name = "${var.env_name} EC2 SG"
   }
 }
 
@@ -273,8 +273,6 @@ resource "aws_instance" "web1" {
   tags {
     Name = "web1-${var.env_name}"
   }
-
-  depends_on = ["aws_key_pair.test"]
 }
 
 resource "aws_instance" "web2" {
@@ -287,8 +285,6 @@ resource "aws_instance" "web2" {
   tags {
     Name = "web2-${var.env_name}"
   }
-
-  depends_on = ["aws_key_pair.test"]
 }
 
 resource "aws_lb" "test" {
