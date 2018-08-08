@@ -276,7 +276,7 @@ resource "aws_instance" "web1" {
   vpc_security_group_ids = [ "${aws_security_group.ec2_sg.id}" ]
   key_name = "test-key"
   associate_public_ip_address = "true"
-  subnet_id = "${aws_subnet.private_1.id}"
+  subnet_id = "${aws_subnet.public_1.id}"
 
   tags {
     Name = "web1-${var.env_name}"
@@ -289,7 +289,7 @@ resource "aws_instance" "web2" {
   vpc_security_group_ids = [ "${aws_security_group.ec2_sg.id}" ]
   key_name = "test-key"
   associate_public_ip_address = "true"
-  subnet_id = "${aws_subnet.private_2.id}"
+  subnet_id = "${aws_subnet.public_2.id}"
 
   tags {
     Name = "web2-${var.env_name}"
