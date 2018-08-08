@@ -275,6 +275,7 @@ resource "aws_instance" "web1" {
   instance_type = "t2.micro"
   vpc_security_group_ids = [ "${aws_security_group.ec2_sg.id}" ]
   key_name = "test-key"
+  associate_public_ip_address = "true"
   subnet_id = "${aws_subnet.public_1.id}"
   user_data = "${file("../terraform-git/scripts/user-data.sh")}"
 
@@ -288,6 +289,7 @@ resource "aws_instance" "web2" {
   instance_type = "t2.micro"
   vpc_security_group_ids = [ "${aws_security_group.ec2_sg.id}" ]
   key_name = "test-key"
+  associate_public_ip_address = "true"
   subnet_id = "${aws_subnet.public_2.id}"
   user_data = "${file("../terraform-git/scripts/user-data.sh")}"
 
