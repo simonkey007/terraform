@@ -11,6 +11,21 @@
   - local_action: wait_for port=22 host="{{ host }}" search_regex=OpenSSH delay=10
 
 - hosts: all
+  gather_facts: False
+  check_mode: no
+  become: True
+  tasks:
+  - name: Install python 2.7
+    raw: >
+      test -e /usr/bin/python ||
+      (
+        (test -e /usr/bin/apt-get && (apt-get -y update && apt-get install -y python)) ||
+        (test -e /usr/bin/yum && (yum makecache fast && yum install -y python))
+      )
+    args:
+      creates: /usr/bin/python
+      
+- hosts: all
   gather_facts: yes
   become: True
   become_user: root
